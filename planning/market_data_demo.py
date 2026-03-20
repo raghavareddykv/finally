@@ -1,22 +1,37 @@
 #!/usr/bin/env python3
 """Market Data Demo — shows the simulator streaming live prices in the terminal.
 
-Run from the backend directory:
+Run from the project root:
     cd backend && uv run python ../planning/market_data_demo.py
 
-Or directly (if backend packages are on PYTHONPATH):
+Or:
     PYTHONPATH=backend python planning/market_data_demo.py
 """
 
 import asyncio
+import importlib.util
 import sys
 import os
 
-# Add backend to path so we can import the market package
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "backend"))
+# Import modules directly by file path to avoid loading market/__init__.py,
+# which imports MassivePoller (requires httpx — an optional dependency).
+_backend = os.path.join(os.path.dirname(__file__), "..", "backend")
 
-from market.cache import PriceCache
-from market.simulator import MarketSimulator
+
+def _load(name: str, path: str):
+    spec = importlib.util.spec_from_file_location(name, os.path.join(_backend, path))
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[name] = mod
+    spec.loader.exec_module(mod)
+    return mod
+
+
+_tickers_mod = _load("market.tickers", "market/tickers.py")
+_cache_mod = _load("market.cache", "market/cache.py")
+_sim_mod = _load("market.simulator", "market/simulator.py")
+
+PriceCache = _cache_mod.PriceCache
+MarketSimulator = _sim_mod.MarketSimulator
 
 # Watchlist to display (subset of the 48 supported tickers)
 WATCHLIST = ["AAPL", "GOOGL", "MSFT", "AMZN", "TSLA", "NVDA", "META", "JPM", "V", "NFLX"]
@@ -82,8 +97,7 @@ async def run_demo(duration: int = 30, interval: float = 1.0) -> None:
     print()
 
     # Grab seed prices for total-change display
-    from market.tickers import SUPPORTED_TICKERS
-    seeds = {t: SUPPORTED_TICKERS[t] for t in WATCHLIST}
+    seeds = {t: _tickers_mod.SUPPORTED_TICKERS[t] for t in WATCHLIST}
 
     await simulator.start()
 
