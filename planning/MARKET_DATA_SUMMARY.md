@@ -1,6 +1,6 @@
-# Market Data Backend — Summary
+# Market Data Backend — Complete Reference
 
-This document consolidates all market data documentation (`MARKET_INTERFACE.md`, `MARKET_SIMULATOR.md`, `MASSIVE_API.md`, `MARKET_DATA_DESIGN.md`, `MARKET_DATA_REVIEW.md`) into a single reference.
+This is the single consolidated document for the FinAlly market data subsystem. It covers architecture, implementation details, API integration, testing, and code review findings.
 
 ---
 
@@ -13,10 +13,13 @@ MassivePoller (REST, 15s)    ──┘
         writes only                    reads only
 ```
 
+**Design principles:**
 - **Provider writes, consumers read** — unidirectional data flow
 - **Protocol-based polymorphism** — `MarketDataProvider` uses `typing.Protocol` (structural typing, no inheritance)
 - **Factory pattern** — `create_market_provider(cache)` selects provider based on `MASSIVE_API_KEY` env var
-- **Single PriceCache dict** — safe for asyncio cooperative scheduling (no locks)
+- **Single PriceCache dict** — safe for asyncio cooperative scheduling (no locks needed)
+
+---
 
 ## File Layout
 
@@ -203,3 +206,9 @@ cd backend && uv run pytest tests/market/ -v
 | `pytest-asyncio >=0.23.0` | Async test support |
 
 MarketSimulator has **zero external dependencies** — stdlib only.
+
+---
+
+## Demo
+
+See `planning/market_data_demo.py` for a runnable demo that starts the simulator, streams prices for a watchlist, and displays live updates in the terminal.
