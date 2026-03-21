@@ -1,0 +1,29 @@
+services:
+  app:
+    build: .
+    container_name: finally
+    ports:
+      - "8000:8000"
+    volumes:
+      - finally-data:/app/db
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  # E2E test runner — only starts with: docker compose --profile test up
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.50.0-noble
+    profiles:
+      - test
+    depends_on:
+      - app
+    environment:
+      - BASE_URL=http://app:8000
+      - LLM_MOCK=true
+    volumes:
+      - ./test:/app/test
+    working_dir: /app/test
+    command: npx playwright test
+
+volumes:
+  finally-data:

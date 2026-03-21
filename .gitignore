@@ -1,3 +1,14 @@
+# FinAlly runtime database
+db/finally.db
+db/finally.db-wal
+db/finally.db-shm
+
+# Frontend build artifacts
+node_modules/
+frontend/.next/
+frontend/out/
+static/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

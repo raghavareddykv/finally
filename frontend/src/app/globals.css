@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme inline {
+  /* Terminal dark backgrounds */
+  --color-terminal-bg: #0d1117;
+  --color-terminal-surface: #1a1a2e;
+  --color-terminal-panel: #161b22;
+  --color-terminal-border: #30363d;
+
+  /* Text */
+  --color-text-primary: #e6edf3;
+  --color-text-secondary: #8b949e;
+  --color-text-muted: #6e7681;
+
+  /* Accent colors */
+  --color-accent-yellow: #ecad0a;
+  --color-accent-blue: #209dd7;
+  --color-accent-purple: #753991;
+
+  /* Trading colors */
+  --color-trade-green: #3fb950;
+  --color-trade-red: #f85149;
+
+  /* Font */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--color-terminal-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-mono), ui-monospace, monospace;
+}
+
+/* Price flash animations */
+@keyframes flash-green {
+  0% { background-color: rgba(63, 185, 80, 0.3); }
+  100% { background-color: transparent; }
+}
+
+@keyframes flash-red {
+  0% { background-color: rgba(248, 81, 73, 0.3); }
+  100% { background-color: transparent; }
+}
+
+.price-flash-up {
+  animation: flash-green 500ms ease-out;
+}
+
+.price-flash-down {
+  animation: flash-red 500ms ease-out;
+}
+
+/* Scrollbar styling for terminal look */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-terminal-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-terminal-border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}
